@@ -1,0 +1,10 @@
+python-dotenv
+openai
+python-telegram-bot
+opencv-python
+pyaudio
+soundfile
+sounddevice
+pvrecorder
+pvporcupine
+opencv-python
