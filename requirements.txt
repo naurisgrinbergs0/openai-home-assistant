@@ -8,3 +8,4 @@ sounddevice
 pvrecorder
 pvporcupine
 opencv-python
+webrtcvad

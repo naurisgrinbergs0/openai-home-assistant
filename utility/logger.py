@@ -1,3 +1,4 @@
+import os
 import settings as s
 import logging
 from utility import config
@@ -7,6 +8,9 @@ handler = logging.FileHandler(config.get_data_file_path("LOG_FILE_NAME"))
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
+
+def init():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 # Debug message

@@ -4,11 +4,12 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 # Settings and config
-import settings as s
+import os
 import time
+import settings as s
+from utility import config
+from utility import logger
 from utility.error import FunctionError
-from utility.logger import e
-import utility.config as config
 import threading
 import websocket
 
@@ -21,11 +22,12 @@ import interface.player as player
 from openai_api import transcripts
 
 # Initialize / connect
-openai_api.connection.init()
+logger.init()
+# openai_api.connection.init()
 config.init()
 # picovoice_engine.init()
 recorder.init()
-realtime.init()
+# realtime.init()
 
 # picovoice_engine.start()
 
@@ -33,41 +35,50 @@ realtime.init()
 
 
 stop_flag = False
+connected_event = threading.Event()
 
 def on_message(ws, message):
-    print("Received:", message)
+    realtime.on_message(ws, message)
 
 def on_error(ws, error):
-    print("Error:", error)
+    print("|-- OpenAI WebSocket error:", error)
 
 def on_close(ws, close_status_code, close_msg):
-    print("Connection closed:", close_status_code, close_msg)
+    print("|-- OpenAI WebSocket disconnected:", close_status_code, close_msg)
 
 def on_open(ws):
-    print("Connection opened")
+    connected_event.set()
+    print("|-- OpenAI WebSocket connected")
 
 def action_loop(ws):
     global stop_flag
+    connected_event.wait()
     while not stop_flag:
         prompt_recorded = recorder.record_prompt()
-        ws.send("Event X occurred")
+        time.sleep(2)
+
         if prompt_recorded:
-                realtime.send_message()
+            realtime.send_message(ws)
+            time.sleep(10)
         stop_flag = True
     ws.close()
 
 def wait_for_exit():
     global stop_flag
-    input("Press Enter to exit...\n")
+    input()
     stop_flag = True
 
 ws_app = websocket.WebSocketApp(
-    "ws://echo.websocket.events",
+    s.openai["REALTIME_MODEL_URL"],
+    header = [
+        "Authorization: Bearer " + os.getenv("OPENAI_API_KEY"),
+        "OpenAI-Beta: realtime=v1"
+    ],
+    on_open=on_open,
     on_message=on_message,
     on_error=on_error,
     on_close=on_close
 )
-ws_app.on_open = on_open
 
 # Start a thread that runs the action loop
 action_thread = threading.Thread(target=action_loop, args=(ws_app,))
@@ -81,23 +92,3 @@ exit_thread.start()
 
 # This call will block and keep receiving WebSocket events
 ws_app.run_forever()
-
-
-while True:
-    try:
-        # if picovoice_engine.process():
-            # time.sleep(0.4)
-            # player.play_file(s.assets["WAKEUP_SOUND_FILE_PATH"])
-            prompt_recorded = recorder.record_prompt()
-
-            # print("TRANS: ", transcripts.transcribe())
-
-            if prompt_recorded:
-                realtime.send_message()
-    # except FunctionError as err:
-    #     e(err.message, True)
-    # except Exception as err:
-    #     e(f"Unhandled exception occured: {err}", True)
-    except KeyboardInterrupt:
-        break
-exit()

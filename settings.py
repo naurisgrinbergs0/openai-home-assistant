@@ -23,7 +23,7 @@ data = {
     "LOG_FILE_NAME": "log.log",
 }
 
-# Platform
+# System settings
 system = {
     "PLATFORM": "windows",  # Options: ("windows" | "rpi-0w")
     "LOGGING_ENABLED": True,
@@ -53,4 +53,10 @@ openai = {
     "CONVERSATION_RESPONSE_MAX_TOKEN_COUNT": 300,
     "IMAGE_DIMENSIONS": "1024x1024",
     "REALTIME_MODEL_URL": "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17"
+}
+
+# Device settings
+device = {
+    "INPUT_AUDIO_SAMPLE_RATE": 32000,
+    "INPUT_AUDIO_CHUNK_SIZE": 1024,
 }
