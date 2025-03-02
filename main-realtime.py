@@ -14,8 +14,8 @@ import threading
 # Interface
 from openai_api import realtime
 import openai_api.connection
-import interface.picovoice_engine as picovoice_engine
-import interface.recorder as recorder
+import interface.wakeword_engine as wakeword_engine
+import interface.audio_recorder as audio_recorder
 import interface.player as player
 from openai_api import transcripts
 
@@ -23,7 +23,7 @@ from openai_api import transcripts
 openai_api.connection.init()
 config.init()
 # picovoice_engine.init()
-recorder.init()
+audio_recorder.init()
 realtime.init()
 
 # picovoice_engine.start()
@@ -31,17 +31,14 @@ ws_thread = threading.Thread(target=realtime.start, daemon=True)
 ws_thread.start()
 time.sleep(1)
 
-
-
-
 cnt = 0
 while True:
     try:
         if cnt == 0:
-        # if picovoice_engine.process():
+            # if picovoice_engine.process():
             # time.sleep(0.4)
             # player.play_file(s.assets["WAKEUP_SOUND_FILE_PATH"])
-            prompt_recorded = recorder.record_prompt()
+            prompt_recorded = audio_recorder.record_prompt()
 
             # print("TRANS: ", transcripts.transcribe())
 

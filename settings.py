@@ -31,7 +31,8 @@ system = {
 
 # API endpoints
 api = {
-    "VISUAL_CROSSING_WEATHER_BASE_URL": "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline",
+    "VISUAL_CROSSING_WEATHER_BASE_URL":
+        "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline",
 }
 
 # Locale settings
@@ -55,8 +56,12 @@ openai = {
     "REALTIME_MODEL_URL": "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17"
 }
 
-# Device settings
-device = {
+# Settings related to audio processing
+audio = {
     "INPUT_AUDIO_SAMPLE_RATE": 32000,
-    "INPUT_AUDIO_CHUNK_SIZE": 1024,
+    "INPUT_AUDIO_FRAME_DURATION": 20,  # Options: (10 | 20 | 30)
+    "INPUT_AUDIO_VOICE_ACTIVITY_DETECTION_AGGRESSIVENESS": 2,  # Integer in range: [0, 3]
+    "INPUT_AUDIO_MAX_WAIT_DURATION_SECONDS": 6,
+    "INPUT_AUDIO_MAX_RECORD_DURATION_SECONDS": 30,
+    "INPUT_AUDIO_SILENCE_DURATION_SECONDS": 1,
 }

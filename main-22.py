@@ -20,31 +20,30 @@ telegram_api.connection.init()
 # Interface
 from response import response
 from openai_api import transcripts
-import interface.picovoice_engine as picovoice_engine
-import interface.recorder as recorder
+import interface.wakeword_engine as wakeword_engine
+import interface.audio_recorder as audio_recorder
 import interface.player as player
-
 
 # Initialize / connect
 config.init()
-picovoice_engine.init()
-recorder.init()
+wakeword_engine.init()
+audio_recorder.init()
 
-picovoice_engine.start()
+wakeword_engine.start()
 telegram_api.connection.start()
 
 # TODO: i guess, now i can interrupt assistant while it is talking, but right now, i think threads/other async processes wont be stopped - should stop
 
 prompt_executed = False
-test_phrase = None#"Kā iet?"
+test_phrase = None  #"Kā iet?"
 
 # Mainloop
 while True:
     try:
-        if picovoice_engine.process():
+        if wakeword_engine.process():
             time.sleep(0.4)
             player.play_file(s.assets["WAKEUP_SOUND_FILE_PATH"])
-            prompt_recorded = recorder.record_prompt()
+            prompt_recorded = audio_recorder.record_prompt()
 
             if prompt_recorded:
                 transcript = transcripts.transcribe()
