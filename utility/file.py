@@ -1,11 +1,9 @@
-import requests
 import base64
-import struct
-import soundfile as sf
+import requests
 
 
 def save_url_file(url, path):
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
 
     if response.status_code == 200:
         with open(path, "wb") as f:
@@ -14,8 +12,8 @@ def save_url_file(url, path):
 
 def read_file_bytes(path):
     with open(path, "rb") as file:
-        bytes = file.read()
-    return bytes
+        data = file.read()
+    return data
 
 
 def read_file_base64(path):

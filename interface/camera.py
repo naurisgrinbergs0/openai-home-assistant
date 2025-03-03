@@ -1,5 +1,5 @@
 import cv2
-import utility.config as config
+from utility import config
 
 
 def take_picture(file_path):

@@ -3,7 +3,7 @@ from openai_api import configuration
 from utility import datetime
 import settings as s
 import json
-from response.function_processing import process_function_calls
+from functions.function_processing import process_function_calls
 
 system_instructions_messages = []
 messages = []
@@ -12,9 +12,7 @@ messages = []
 
 
 # Function to process the text stream and populate the array
-def parallel_phrase_generation(
-    phrase_queue, prompt, capture_base64, tool_call_id_replying_to
-):
+def parallel_phrase_generation(phrase_queue, prompt, capture_base64, tool_call_id_replying_to):
     phrase_end_chars = [".", "!", "?", ":", ";"]
     phrase_force_end_chars = [" ", ".", ",", "!", "?", ":", ";", "-", "/"]
     full_response_text = ""
@@ -29,21 +27,16 @@ def parallel_phrase_generation(
     if capture_base64:
         messages.append({"role": "user", "content": prompt})
         response_stream = completions.generate_vision_completion(
-            system_instructions_messages + messages, capture_base64
-        )
+            system_instructions_messages + messages, capture_base64)
     else:
         if tool_call_id_replying_to:
-            messages.append(
-                {
-                    "role": "tool",
-                    "content": prompt,
-                    "tool_call_id": tool_call_id_replying_to,
-                }
-            )
+            messages.append({
+                "role": "tool",
+                "content": prompt,
+                "tool_call_id": tool_call_id_replying_to,
+            })
         messages.append({"role": "user", "content": prompt})
-        response_stream = completions.generate_completion(
-            system_instructions_messages + messages
-        )
+        response_stream = completions.generate_completion(system_instructions_messages + messages)
 
     # Process stream
     for chunk in response_stream:
@@ -52,9 +45,8 @@ def parallel_phrase_generation(
 
         if content:
             # End and queue the phrase (if too long - force end)
-            if (len(phrase) > 50 and content[0] in phrase_end_chars) or (
-                len(phrase) > 500 and content[0] in phrase_force_end_chars
-            ):
+            if (len(phrase) > 50 and content[0] in phrase_end_chars) or (len(phrase) > 500 and
+                                                                         content[0] in phrase_force_end_chars):
                 phrase_queue.put(phrase)
                 phrase = ""
             phrase += content
@@ -70,10 +62,7 @@ def parallel_phrase_generation(
             if tool_call.name:
                 func_calls[0]["name"] = tool_call.name
             if tool_call.arguments:
-                if (
-                    func_calls[0].get("arguments")
-                    or func_calls[0].get("arguments") == ""
-                ):
+                if (func_calls[0].get("arguments") or func_calls[0].get("arguments") == ""):
                     func_calls[0]["arguments"] += tool_call.arguments
                 else:
                     func_calls[0]["arguments"] = tool_call.arguments

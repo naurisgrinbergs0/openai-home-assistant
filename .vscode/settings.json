@@ -16,9 +16,12 @@
         "--disable=too-many-statements",
         "--disable=too-many-arguments",
         "--disable=too-many-instance-attributes",
+        "--disable=too-few-public-methods",
         "--disable=missing-module-docstring",
         "--disable=missing-class-docstring",
         "--disable=missing-function-docstring",
         "--disable=broad-except",
+        "--disable=global-statement",
+        "--disable=C0103",
     ]
 }

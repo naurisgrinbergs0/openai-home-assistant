@@ -31,5 +31,4 @@ class WakewordEngine:
         return False
 
     def close(self):
-        """Clean up resources."""
         self.engine.delete()

@@ -1,9 +1,11 @@
 # Functions
 functions = {
-    "TOGGLE_LIGHTS": "toggle_lights",
-    "TAKE_PICTURE": "take_picture",
     "GET_WEATHER": "get_weather",
-    "GENERATE_IMAGE": "generate_image",
+    "TAKE_PICTURE": "take_picture",
+    "TOGGLE_LIGHTS": "toggle_lights",
+    "TELEGRAM_SEND_MESSAGE": "telegram_send_message",
+    "TELEGRAM_SEND_PICTURE": "telegram_send_picture",
+    "GET_USER_INPUT": "get_user_input",
 }
 
 # Assets

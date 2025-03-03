@@ -1,15 +1,20 @@
 import os
-import settings as s
 import logging
+import settings as s
 from utility import config
 
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-handler = logging.FileHandler(config.get_data_file_path("LOG_FILE_NAME"))
-handler.setFormatter(formatter)
-logger = logging.getLogger()
-logger.addHandler(handler)
+logger = None
+
 
 def init():
+    global logger
+
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler = logging.FileHandler(config.get_data_file_path("LOG_FILE_NAME"))
+    handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
+
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
