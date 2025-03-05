@@ -45,6 +45,7 @@ class WebSocketInterface:
             self.on_error_callback(error)
 
     def start(self):
+        self.connected_or_failed.clear()
         self.ws_app = websocket.WebSocketApp(
             self.url,
             header=self.header,
@@ -53,19 +54,23 @@ class WebSocketInterface:
             on_error=self._on_error,
             on_close=self._on_close)
 
-        def serve_websocket_loop(ws,):
-            ws.run_forever()
+        def serve_websocket_loop():
+            self.ws_app.run_forever()
 
-        ws_thread = threading.Thread(target=serve_websocket_loop, args=(self.ws_app,))
+        ws_thread = threading.Thread(target=serve_websocket_loop, args=())
         ws_thread.daemon = True
         ws_thread.start()
 
         self.connected_or_failed.wait()
 
     def stop(self):
+        self.connected_or_failed.clear()
         if self.ws_app:
             self.ws_app.close()
+            self.ws_app = None
 
     def send_message(self, data):
-        if self.ws_app:
-            self.ws_app.send(data)
+        if not self.ws_app:
+            self.start()
+
+        self.ws_app.send(data)

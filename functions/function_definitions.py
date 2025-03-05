@@ -17,11 +17,10 @@ get_weather = {
             "type": "object",
             "properties":
                 {
-                    "location":
-                        {
-                            "type": ["string", "null"],
-                            "description": "Location (Only if user gave specific location)",
-                        },
+                    "location": {
+                        "type": ["string", "null"],
+                        "description": "Location (can be empty)",
+                    },
                     "date": {
                         "type": ["string", "null"],
                         "description": "Date (yyyy-MM-dd)",
@@ -70,12 +69,19 @@ telegram_send_message = {
     "parameters":
         {
             "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "description": "Message to send",
+            "properties":
+                {
+                    "recipient":
+                        {
+                            "type": "string",
+                            "enum": ["all"],  # TODO: add recipients from file
+                            "description": "Recipient of message",
+                        },
+                    "message": {
+                        "type": "string",
+                        "description": "Message to send",
+                    },
                 },
-            },
             "required": ["message"],
         },
 }
@@ -92,10 +98,16 @@ telegram_send_picture = {
             "type": "object",
             "properties":
                 {
+                    "recipient":
+                        {
+                            "type": "string",
+                            "enum": ["all"],  # TODO: add recipients from file
+                            "description": "Recipient of message",
+                        },
                     "source":
                         {
                             "type": "string",
-                            "enum": ["generate", "capture", "last_image"],
+                            "enum": ["generate", "capture", "recent_image"],
                             "description": "Prompt text",
                         },
                     "prompt": {
@@ -114,10 +126,14 @@ telegram_send_picture = {
 }
 
 get_user_input = {
-    "type": "function",
-    "name": s.functions["GET_USER_INPUT"],
-    "description": "Allows user to answer assistant's question or say something to assistant",
-    "parameters": params_empty,
+    "type":
+        "function",
+    "name":
+        s.functions["GET_USER_INPUT"],
+    "description":
+        "Allows user to answer assistant's question or say something to assistant. Always call this if input is expected from user",
+    "parameters":
+        params_empty,
 }
 
 

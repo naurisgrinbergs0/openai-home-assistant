@@ -10,7 +10,7 @@ functions = {
 
 # Assets
 assets = {
-    "WAKEUP_WORD_WINDOWS_FILE_PATH": "./assets/wakeup_phrases/hej-bobbie-windows.ppn",
+    "WAKEUP_WORD_WINDOWS_FILE_PATH": "./assets/wakeup_phrases/hey-alex-windows.ppn",
     "WAKEUP_WORD_RPI_0W_FILE_PATH": "./assets/wakeup_phrases/nelson-rpi-0w.ppn",
     "WAKEUP_SOUND_FILE_PATH": "./assets/wakeup_sounds/event.mp3",
 }

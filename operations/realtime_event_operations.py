@@ -15,15 +15,19 @@ def get_headers():
     ]
 
 
-def on_message(message, audio_player: AudioPlayer):
-    data = json.loads(message)
+def on_message(message, ws_interface: WebSocketInterface, audio_player: AudioPlayer):
+    if message.strip():
+        data = json.loads(message)
 
     match data["type"]:
         case "response.audio.delta":
             audio_player.append_audio_chunks(convert.base64_to_bytes(data["delta"]))
         case "response.done":
             if data["response"]["output"][0]["type"] == "function_call":
-                function_processing.process_function_calls([data["response"]["output"]])
+                results = function_processing.process_function_calls(data["response"]["output"])
+                for result in results:
+                    send_function_call_result(ws_interface, result)
+                request_response(ws_interface)
         case "response.audio.done":
             #     audio_player.stop_playing()
             pass
@@ -36,12 +40,13 @@ def on_message(message, audio_player: AudioPlayer):
             print("| Input: ", data["transcript"])
         case (
             "session.created" | "response.audio_transcript.delta" | "rate_limits.updated" |
-            "conversation.item.created" | "response.content_part.done" | "response.output_item.done" |
-            "response.function_call_arguments.done" | "response.content_part.added" | "response.output_item.added" |
-            "response.created" | "input_audio_buffer.committed" | "input_audio_buffer.speech_started"):
+            "conversation.item.created" | "response.content_part.done" |
+            "response.function_call_arguments.done" | "response.function_call_arguments.delta" |
+            "response.content_part.added" | "response.output_item.added" | "response.created" |
+            "input_audio_buffer.committed" | "input_audio_buffer.speech_started"):
             # print("EVENT: ", data["type"])
             pass
-        case _:
+        case "response.output_item.done" | _:
             print(json.dumps(data, indent=2))
 
 
@@ -53,7 +58,7 @@ def update_session(ws_interface: WebSocketInterface):
                 "modalities": ["text", "audio"],
                 # "model": "gpt-4o-realtime-preview",
                 "instructions": configuration.assistant_instructions,
-                "voice": "echo",
+                "voice": "ballad",
                 "turn_detection": None,
                 # "turn_detection": {"type": "server_vad", "threshold": 0.3, "prefix_padding_ms": 300, "silence_duration_ms": 200},
                 # "input_audio_format": "pcm16",
@@ -65,8 +70,8 @@ def update_session(ws_interface: WebSocketInterface):
                         # "prompt": "Latviešu valoda",
                     },
                 "tool_choice": "auto",
-                # "temperature": 0.8,
-                # "max_response_output_tokens": "inf",
+                "temperature": 0.8,
+                "max_response_output_tokens": 4096,
                 "tools": function_definitions.get_function_definitions()
             }
     }
@@ -96,6 +101,34 @@ def commit_audio_chunks(ws_interface: WebSocketInterface):
 #         "type": "conversation.item.truncate",
 #     }
 #     ws_interface.send_message(json.dumps(event))
+
+
+def insert_conversation_text(ws_interface: WebSocketInterface, role, data):
+    event = {
+        "type": "conversation.item.create",
+        "item": {
+            "type": "message",
+            "role": role,
+            "content": [{
+                "type": "input_text",
+                "text": data
+            }]
+        }
+    }
+    ws_interface.send_message(json.dumps(event))
+
+
+def send_function_call_result(ws_interface: WebSocketInterface, result):
+    event = {
+        "type": "conversation.item.create",
+        "item":
+            {
+                "type": "function_call_output",
+                "call_id": result["call_id"],
+                "output": f"Error: {result["error"]}" if result["error"] else result["result"]
+            }
+    }
+    ws_interface.send_message(json.dumps(event))
 
 
 def request_response(ws_interface: WebSocketInterface):
