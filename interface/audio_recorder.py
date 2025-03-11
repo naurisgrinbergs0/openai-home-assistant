@@ -89,7 +89,7 @@ class AudioRecorder:
                         silence_start_time = current_time
                     elif (current_time - silence_start_time) > self.silence_duration:
                         if self.on_speech_finished_callback:
-                            self.on_speech_finished_callback()
+                            self.on_speech_finished_callback(b"".join(frames))
                         print("|-- Recording stopped due to silence")
                         break
                 else:

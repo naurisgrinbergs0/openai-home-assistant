@@ -11,8 +11,6 @@ def process_function_calls(func_calls):
     def Object(**kwargs):
         return type("Object", (), kwargs)
 
-    # Object = lambda **kwargs: type("Object", (), kwargs)
-
     for func in func_calls:
         args = None
         if func["arguments"] != "":

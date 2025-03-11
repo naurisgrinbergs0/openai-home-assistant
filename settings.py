@@ -55,7 +55,7 @@ openai = {
     "CONVERSATION_CONTEXT_MESSAGE_COUNT": 10,
     "CONVERSATION_RESPONSE_MAX_TOKEN_COUNT": 300,
     "IMAGE_DIMENSIONS": "1024x1024",
-    "REALTIME_MODEL_URL": "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17"
+    "REALTIME_MODEL_URL": "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview"
 }
 
 # Settings related to audio processing
