@@ -9,3 +9,5 @@ pvrecorder
 pvporcupine
 opencv-python
 webrtcvad
+pandas
+openpyxl

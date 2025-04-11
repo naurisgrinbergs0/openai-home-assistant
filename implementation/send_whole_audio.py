@@ -30,7 +30,7 @@ def on_wakeword_detected():
 wakeword_engine = WakewordEngine(on_wakeword_detected_callback=on_wakeword_detected)
 audio_player = AudioPlayer()
 ws_interface = WebSocketInterface(
-    s.openai["REALTIME_MODEL_URL"],
+    s.openai["REALTIME_MODEL_ENDPOINT"],
     realtime_event_operations.get_headers(),
     on_open_callback=realtime_event_operations.update_session,
     on_message_callback=lambda message: realtime_event_operations.on_message(message, ws_interface, audio_player))
